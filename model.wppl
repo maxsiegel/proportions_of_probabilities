@@ -2,17 +2,14 @@
 var observed = [[0, 0, 1, 1], [1, 1, 1, 0]]
 var num_kids = 2
 
-    var mapFlat = function(f, arr) {
-        return _.flatten(map(f, arr))
-    }
-        var bern = function(p) {
-        return bernoulli(p) ? 1 : 0
-    }
+var mapFlat = function(f, arr) {
+    return _.flatten(map(f, arr))
+}
+var bern = function(p) {
+    return bernoulli(p) ? 1 : 0
+}
 
-// var out = Infer({method: "rejection", samples: 100, model: function() {
-
-
-
+var out = Infer({method: "rejection", samples: 10, model: function() {
 
     var coin_weights = [.5, .66, 1.]
 
@@ -23,18 +20,19 @@ var num_kids = 2
     //     if (n==3) return [1, 1, 1];
     // }
 
-    var mixture = dirichlet({alpha: Vector([10, 10, 1])})
+    // var mixture = dirichlet({alpha: Vector([10, 10, 1])})
+    var mixture = dirichlet({alpha: Vector([1, 1, 1])})
 
     // each kid should pick one distribution.
     // var dist_choice = sample(Categorical({ps: mixture, vs: [0, 1, 2]}))
     // var weight = coin_weights[dist_choice];
 
     var kid_dists = map(function() {sample(Categorical({ps: mixture, vs: [0, 1, 2]}))},
-                          _.range(num_kids))
+                        _.range(num_kids))
     var kid_weights = map(function(x) {coin_weights[x]}, kid_dists)
 
     var sample_individual_kid_data = function(weight) {
-      display(weight)
+        // display(weight)
         var choices = repeat(4, function() {bern(weight)})
         // var choices = binomial({p: weight, n: 12})
         return choices
@@ -43,14 +41,39 @@ var num_kids = 2
     //var model_data = function() {map(sample_individual_kid_data, kid_weights)}
     // condition(mapData({data: observed}, model_data) == observed)
     var sample_dataset = function() {
-      return map(sample_individual_kid_data, kid_weights)
+        return map(sample_individual_kid_data, kid_weights)
     }
 
-    // condition(sample_dataset() == observed)
+    const dataset = sample_dataset()
+    // if (dataset==observed) display("yes")
+    // display(dataset)
+    // condition(dataset == observed)
 
-// }})
+    // condition(_.isEqual(dataset, observed))
+    // display(_.isEqual(dataset, observed))
+    // display(dataset)
+    condition(_.isEqual(dataset, observed))
+    display(kid_weights)
 
-sample_dataset()
+    // var d = map(function(x) {return x.value.dataset}, out.samples)
+    // display(d)
+
+    return {dataset: dataset, kid_weights: kid_weights}
+
+}})
+
+var d = map(function(x) {return x.value.kid_weights}, out.params.samples)
+// mapObject(function(x, y) {return y}, d)
+
+var counts = _.chain(d)
+    .countBy()
+    .values()
+
+counts
+//         .each(function(x) {x[1] / 1000})
+//         .value())
+// display(out.samples)
+// sample_dataset()
 // viz(out)
 // mapFlat(sample_individual_kid_data, num_components)
 // Categorical({ps: mixture, vs: [0, 1, 2]})
