@@ -2,6 +2,8 @@
 var observed = [[0, 0, 1, 1], [1, 1, 1, 0]]
 var num_kids = 2
 
+const nsamples = 100
+
 var mapFlat = function(f, arr) {
     return _.flatten(map(f, arr))
 }
@@ -9,7 +11,7 @@ var bern = function(p) {
     return bernoulli(p) ? 1 : 0
 }
 
-var out = Infer({method: "rejection", samples: 10, model: function() {
+var out = Infer({method: "rejection", samples: nsamples, model: function() {
 
     var coin_weights = [.5, .66, 1.]
 
@@ -53,7 +55,7 @@ var out = Infer({method: "rejection", samples: 10, model: function() {
     // display(_.isEqual(dataset, observed))
     // display(dataset)
     condition(_.isEqual(dataset, observed))
-    display(kid_weights)
+    // display(kid_weights)
 
     // var d = map(function(x) {return x.value.dataset}, out.samples)
     // display(d)
@@ -63,13 +65,18 @@ var out = Infer({method: "rejection", samples: 10, model: function() {
 }})
 
 var d = map(function(x) {return x.value.kid_weights}, out.params.samples)
+var d = map(function(x) {x.sort()}, d)
 // mapObject(function(x, y) {return y}, d)
 
-var counts = _.chain(d)
+var i = _.chain(d)
     .countBy()
-    .values()
+    // .values()
+    // .forEach(function(x) {display(sort(x))})
+    .value()
 
-counts
+
+mapObject(function(key, val) {val / nsamples}, i)
+
 //         .each(function(x) {x[1] / 1000})
 //         .value())
 // display(out.samples)
