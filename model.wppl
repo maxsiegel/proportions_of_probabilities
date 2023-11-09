@@ -7,7 +7,8 @@ const nsamples = 100
 var mapFlat = function(f, arr) {
     return _.flatten(map(f, arr))
 }
-var bern = function(p) {
+
+var flip = function(p) {
     return bernoulli(p) ? 1 : 0
 }
 
@@ -35,7 +36,7 @@ var out = Infer({method: "rejection", samples: nsamples, model: function() {
 
     var sample_individual_kid_data = function(weight) {
         // display(weight)
-        var choices = repeat(4, function() {bern(weight)})
+        var choices = repeat(4, function() {flip(weight)})
         // var choices = binomial({p: weight, n: 12})
         return choices
     }
