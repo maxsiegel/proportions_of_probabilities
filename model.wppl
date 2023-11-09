@@ -4,9 +4,9 @@ var num_kids = 2
 
 const nsamples = 100
 
-var mapFlat = function(f, arr) {
-    return _.flatten(map(f, arr))
-}
+// var mapFlat = function(f, arr) {
+//     return _.flatten(map(f, arr))
+// }
 
 var flip = function(p) {
     return bernoulli(p) ? 1 : 0
@@ -86,4 +86,3 @@ mapObject(function(key, val) {val / nsamples}, i)
 // mapFlat(sample_individual_kid_data, num_components)
 // Categorical({ps: mixture, vs: [0, 1, 2]})
 
-// mapFlat(sample_individual_kid_data, _.range(10))
