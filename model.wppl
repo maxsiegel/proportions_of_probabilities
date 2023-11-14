@@ -1,8 +1,8 @@
 // var observed = [[0, 0, 1, 1], [1, 1, 1, 0], [1, 1, 1, 1]]
-var observed = [[0, 0, 1, 1], [1, 1, 1, 0]]
+var observed = [[0, 0, 1, 1], [1, 1, 1, 0], [1, 1, 0, 0]]
 var num_kids = observed.length
 
-const nsamples = 100
+const nsamples = 40
 
 // var mapFlat = function(f, arr) {
 //     return _.flatten(map(f, arr))
@@ -55,7 +55,13 @@ var out = Infer({method: "rejection", samples: nsamples, model: function() {
     // condition(_.isEqual(dataset, observed))
     // display(_.isEqual(dataset, observed))
     // display(dataset)
-    condition(_.isEqual(dataset, observed))
+
+    // condition(_.isEqual(dataset, observed))
+
+    // condition on the number of heads for each individual child. this way we
+    // don't have to match actual vector of outcomes
+    condition(_.isEqual(map(sum, dataset), map(sum, observed)))
+
     // display(kid_weights)
 
     // var d = map(function(x) {return x.value.dataset}, out.samples)
